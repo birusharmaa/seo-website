@@ -403,8 +403,17 @@ class ManageSection extends BaseController
             //     ];
             // }
 
+            $testarr = explode(",", $page_id);
+            $sub_menu_title = $this->manage->get_menuName($testarr[0]);
+            $arr[] = [
+                "menu" => $testarr[0],
+                "sub_menu" => $testarr[2],
+                "sub_menu_title" => $sub_menu_title,
+            ];
+
             $data = array(
-                'page_id' => ltrim($page_id),
+                //'page_id' => ltrim($page_id),
+                'page_id' => json_encode($arr),
                 'position' => xss_clean($this->request->getVar('position')),
                 'heading' => xss_clean($this->request->getVar('heading')),
                 'description' => $this->request->getVar('des'),
@@ -417,13 +426,10 @@ class ManageSection extends BaseController
             $return = true;
             $db = db_connect();
             $last_id = $db->insertID();
-
-
             if ($return) {
-                
-                if ($page_id == 'Home' || $page_id == 'About Us') {
+                if ($testarr[0] == 1 || $testarr[0] == 2) {
                     $p_id = 1;
-                    if ($page_id == 'About Us') {
+                    if ($testarr[0] == 2) {
                         $p_id = 2;
                     }
 
@@ -501,6 +507,14 @@ class ManageSection extends BaseController
         //         "sub_menu_title" => $sub_menu_title,
         //     ];
         // }
+        $testarr = explode(",", $page_id);
+        $sub_menu_title = $this->manage->get_menuName($testarr[0]);
+        $arr[] = [
+            "menu" => $testarr[0],
+            "sub_menu" => $testarr[2],
+            "sub_menu_title" => $sub_menu_title,
+        ];
+
 
         $file_name = NULL;
         $file = $this->request->getFile('upload_image');
@@ -511,7 +525,8 @@ class ManageSection extends BaseController
 
         if (!empty($file_name)) {
             $data = array(
-                'page_id' => ltrim($page_id),
+                //'page_id' => ltrim($page_id),
+                'page_id' => json_encode($arr),
                 'position' => xss_clean($this->request->getVar('position')),
                 'heading' => xss_clean($this->request->getVar('heading')),
                 'description' => $this->request->getVar('des'),
@@ -521,7 +536,8 @@ class ManageSection extends BaseController
             );
         } else {
             $data = array(
-                'page_id' => ltrim($page_id),
+                //'page_id' => ltrim($page_id),
+                'page_id' => json_encode($arr),
                 'position' => xss_clean($this->request->getVar('position')),
                 'heading' => xss_clean($this->request->getVar('heading')),
                 'description' => $this->request->getVar('des'),
@@ -537,10 +553,14 @@ class ManageSection extends BaseController
             $arrange_section_id = $this->arrange_section_model->select('id')->where(['section_id' => $id,   'url_val' => 'custom'])->first();
 
             if (isset($arrange_section_id['id']) && !empty($arrange_section_id['id'])) {
-                $p_id = 1;
-                if ($page_id == 'About Us') {
+                
+                if ($testarr[0] == 1) {
+                    $p_id = 1;
+                }
+                if ($testarr[2] == 1) {
                     $p_id = 2;
                 }
+
                 $arrange_section_data = [
                     'title'      => xss_clean($this->request->getVar('heading')),
                     'updated_by' => $user_data["user_id"],
@@ -549,8 +569,7 @@ class ManageSection extends BaseController
                 //update slider title value for arrange section
                 $r = $this->arrange_section_model->update($arrange_section_id['id'], $arrange_section_data);                
             }
-
-            echo json_encode(['status' => true, 'message' => 'Custom section update successfully.']);
+            echo json_encode(['status' => true, 'message' => 'Custom section updated successfully.']);
         } else {
             echo json_encode(['status' => false, 'message' => 'Their is some problem. Please try again.']);
         }
@@ -594,9 +613,9 @@ class ManageSection extends BaseController
     {
         $validation =  \Config\Services::validation();
         if (!$this->validate([
-            'service' => 'is_unique[seo_service.service]',
+            'service' => 'required|is_unique[seo_service.service]'
         ])) {
-            echo json_encode(['status' => false, 'validation' => true, 'message' => $validation->getError()]);
+            echo json_encode(['status' => false, 'validation' => true, 'message' => 'This name is already exist.']);
         } else {
 
             $banner_image = NULL;

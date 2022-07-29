@@ -48,7 +48,13 @@
 												<img style="width:50px; height:50px;" src="<?= $img;?>" alt="" />
 											</a>
 										</td>
-										<td><?= $value->page_id ?></td>
+										<td><?php
+											// $arr = json_decode($value->page_id);
+											// bb_print_r()
+											// $arr = getSubMenuPageName($arr[0]->menu, $arr[0]->sub_menu);
+											//echo $arr;
+											$value->page_id
+										?></td>
 										<td><?= $value->position; ?></td>
 										<td><?= $value->created_at; ?></td>
 										<td>
@@ -86,16 +92,19 @@
 							<?php if ($pages) : foreach ($pages as $value) : ?>
 									<?php $ids = '';
 									$optiontext = '';
-									if (empty($value->service_id) && empty($value->product_id)) {
-										$ids = $value->menu_name;
-										$optiontext = $value->menu_name;
-									} else if (!empty($value->service_id)) {
-										$ids = $value->menu_name . "," . $value->service_id;
-										$optiontext = $value->menu_name . " - " . $value->service;
-									} else {
-										$ids = $value->menu_name . "," . $value->product_id;
-										$optiontext = $value->menu_name . " - " . $value->product_name;
-									} ?>
+									// if (empty($value->service_id) && empty($value->product_id)) {
+									// 	$ids = $value->menu_name;
+									// 	$optiontext = $value->menu_name;
+									// } else if (!empty($value->service_id)) {
+									// 	$ids = $value->menu_name . "," . $value->service_id;
+									// 	$optiontext = $value->menu_name . " - " . $value->service;
+									// } else {
+									// 	$ids = $value->menu_name . "," . $value->product_id;
+									// 	$optiontext = $value->menu_name . " - " . $value->product_name;
+									// }
+									$ids = $value->menu_id . ", 0, ".$value->sub_menu;
+									$optiontext = $value->menu_name;
+									?>
 									<option value="<?= $ids; ?>"><?= $optiontext; ?></option>
 							<?php endforeach;
 							endif; ?>
