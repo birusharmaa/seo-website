@@ -9,6 +9,7 @@ use App\Models\SliderSectionModel;
 if (!function_exists('getPageSlider')) {
     function getPageSlider($menu_id = 0, $sub_menu = 0)
     {
+       
 
         $slider_images = new SliderModel();
         $slider_model  = new SliderSectionModel();

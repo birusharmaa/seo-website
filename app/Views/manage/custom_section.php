@@ -49,11 +49,9 @@
 											</a>
 										</td>
 										<td><?php
-											// $arr = json_decode($value->page_id);
-											// bb_print_r()
-											// $arr = getSubMenuPageName($arr[0]->menu, $arr[0]->sub_menu);
-											//echo $arr;
-											$value->page_id
+											$arr = json_decode($value->page_id);
+											$arr = getSubMenuPageName($arr[0]->menu, $arr[0]->sub_menu);
+											echo $arr;
 										?></td>
 										<td><?= $value->position; ?></td>
 										<td><?= $value->created_at; ?></td>

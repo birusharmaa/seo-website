@@ -139,13 +139,13 @@ if ($user_details['appointment_booking'] == "Hide") {
         Book an Appointment
     </div>
     <?php
-    foreach($sort_order as $myurl)
-    {
-        if($myurl['url_val'] != "contact")
-        {
-          include('layout/'.$myurl['url_val'].'.php');
-        }
-        else
+   
+
+    foreach($sort_order as $myurl){
+        if($myurl['url_val'] != "contact"){
+            $url = 'layout/'.$myurl['url_val'].'.php';
+            include($url);
+        }else
         { ?>
             <!-- --------Contact Us---------- -->
             <section class="mb-4">

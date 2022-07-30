@@ -1,8 +1,3 @@
-<!-- <div class="container">
-    <div class="row mt-30 text-center my-4">
-        <h2><span class="text-color text-uppercase fw-bold">Our Custom Section</span></h2>
-    </div>
-</div> -->
 <?php
     if (!empty($custom_section)) {
         foreach ($custom_section as $custom) {

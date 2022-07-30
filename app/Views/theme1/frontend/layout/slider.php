@@ -4,12 +4,15 @@
         foreach ($sliders as $slider) {
             if ($slider['section_id'] == $myurl['section_id']) {
                 echo '<div class="one-time">';
-                unset($slider['section_id']);
+                if(isset($slider['section_id'])){
+                    unset($slider['section_id']);
+                }
+                
                 foreach ($slider as $key => $sldr) {
                     // if($key == "section_id"){
                     //     continue;
                     // }
-    ?>
+                ?>
                     <div>
                         <div class="slider-height" style="background-image:url(<?= base_url(); ?>/public/uploads/slider_images/<?= $sldr['image']; ?>)">
                             <div class="row align-items-start flex-column justify-content-center h-100">
@@ -24,7 +27,7 @@
                             </div>
                         </div>
                     </div>
-    <?php
+                <?php
                 }
                 echo '</div>';
             }

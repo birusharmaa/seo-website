@@ -79,6 +79,7 @@
 							<?php $num = 1;
 							if ($data) : foreach ($data as $value) : ?>
 									<?php $page_id222 = json_decode($value->page_id);
+									
 									$slider_id = json_decode($value->slider);  ?>
 									<tr id="<?= $value->id; ?>">
 										<td><?= $num; ?></td>
@@ -96,9 +97,14 @@
 											endif; ?>
 										</td>
 										<td class="custom_wdth">
-											<?php if ($page_id222) : foreach ($page_id222 as $value2) : ?>
-													<?= $value2->sub_menu_title . ", "; ?>
-											<?php endforeach;
+											<?php if ($page_id222) : foreach ($page_id222 as $k=>$value2) :
+												$arr = getSubMenuPageName($value2->menu, $value2->sub_menu);
+												$comm = ", ";
+												if($k == count($page_id222)-1){
+													$comm = "";
+												}
+												echo $arr.$comm;
+												endforeach;
 											endif; ?>
 										</td>
 										<td>

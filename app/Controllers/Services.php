@@ -8,6 +8,7 @@ use App\Libraries\Meta_keywords;
 use App\Models\ArrangeCustomSection;
 use App\Models\SliderModel;
 use App\Models\SliderSectionModel;
+use App\Models\CustomSectionModel;
 
 
 
@@ -77,21 +78,24 @@ class Services extends UiController {
             $slugs = $this->request->uri->getSegment(2);
             $menu_sub_menu_id = $this->request->uri->getSegment(3);
         }
-        $res = [];
-        $page_slider = "";
         $final_slider = [];
 
         if(!empty($menu_sub_menu_id)){
-            
             $menu_sub_menu_id = base64_decode($menu_sub_menu_id);
             $arr = explode("/", $menu_sub_menu_id);
             $menu_id  = $arr[0];
             $sub_menu = $arr[1];
-            $custom_slider = $this->custom_arrange->select('section_id')->where(['section_title' => 'Slider Section', 'menu_id' =>$menu_id, 'submenu_id' =>$sub_menu ])->orderBy('soroting_order')->findAll();
+            
+            //Get sorting oder of arrange section
+            $sort_order =  $this->user_slider->getSortOrder('', $menu_id, $sub_menu);
 
+            $custom_slider = $this->custom_arrange->select('section_id')->where(['section_title' => 'Slider Section', 'menu_id' =>$menu_id, 'submenu_id' =>$sub_menu ])->orderBy('soroting_order')->findAll();
+            
+            //Get All services section slider
             $final_slider = [];
             foreach($custom_slider as $cs){
-                $slider = $this->slider_section->select('slider')->where('id', $cs['section_id'])->first();
+                $slider = $this->slider_section->select(['id','slider'])->where('id', $cs['section_id'])->first();
+                $slider_id = $slider['id'];
                 $slider = $slider['slider'];
                 $slider = json_decode($slider);
                 $slider_image_list = [];
@@ -108,14 +112,34 @@ class Services extends UiController {
                     $arr = ['title_style' => $title_style, 'desc_style' => $desc_style, "image"=>$img, "title"=>$title, "desc"=>$desc, "text_color"=>$text, 'heading_color'=>$head] ;
                     $slider_image_list[] = $arr;
                 }
+                $slider_image_list['section_id'] = $slider_id;
                 $final_slider[] = $slider_image_list;
             }
+
+            $custom_section_model  = new CustomSectionModel();
+            $custom_section = $custom_section_model->where('status', 1)->findAll();
+            $custom = [];
+            if (!empty($custom_section)) {
+                foreach ($custom_section as $value) {
+                    $custom_page = json_decode($value['page_id']);
+                    $temp = [];
+                    if ($custom_page[0]->menu == $menu_id && $custom_page[0]->sub_menu == $sub_menu) {
+                        $temp['id'] = $value['id'];
+                        $temp['upload_image'] = $value['upload_image'];
+                        $temp['position'] = $value['position'];
+                        $temp['heading'] = $value['heading'];
+                        $temp['description'] = $value['description'];
+                        $custom[] = $temp;
+                    }
+                }
+            }
+
+
         }
         
         if(!empty($slugs)){
             $this->services = new ServicesModel();
             $service = $this->services->where('slug', $slugs)->first();
-            //$this->services->select(['slug', 'service', 'menu_link']);
             $all_services = $this->services->findAll();
             $pageData = [
                 'title' => 'Services | '.$slugs,
@@ -140,6 +164,7 @@ class Services extends UiController {
                 'custom_section'=> $custom,
                 'testimonials'  => $testimonial,
                 'fq_lists'      => $fq_lists,
+                'sort_order'    => $sort_order,
             ];
             return view($this->user['theme_name'].'/'.'frontend/service_detail', $pageData);
         }

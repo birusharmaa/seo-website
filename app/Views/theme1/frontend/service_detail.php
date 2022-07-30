@@ -5,6 +5,7 @@
 </style> -->
 <?= $this->endSection(); ?>
 <?= $this->section("contentTheme1");
+//bb_print_r($sliders);
 ?>
 <div class="services-page overflow-hidden">
     <section>
@@ -125,8 +126,15 @@
         echo "</div>";
         echo "</div>";
     }
+    
+    foreach($sort_order as $myurl){
+        if($myurl['url_val'] != "contact"){
+            $file_url = 'layout/'.$myurl['url_val'].".php";
+            //echo "<br/>".$file_url;
+            include($file_url);
+        }
+    }
     ?>
-    <?= $this->include('theme1/frontend/custom_page_data'); ?>
     <!-- --------Contact Us---------- -->
     <section class="mb-4 overflow-hidden">
         <div class="contact section-padding">

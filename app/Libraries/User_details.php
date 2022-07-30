@@ -36,6 +36,7 @@ use App\Models\FaqModel;
 use App\Models\FaqSectionModel;
 
 use App\Models\ArrangeSection;
+use App\Models\ArrangeCustomSection;
 
 
 
@@ -259,10 +260,32 @@ class User_details{
      *
      * @return void
      */
-    public function getCustomSectionData($data = null){
-        $this->custom_section = new CustomSectionModel();
-        $custom = $this->custom_section->select(['id','upload_image', 'position', 'heading', 'description'])->where('page_id', $data)->findAll();
+    public function getCustomSectionData($menu_id=0, $sub_menu=0, $data = null){
+        // $this->custom_section = new CustomSectionModel();
+        // $custom = $this->custom_section->select(['id','upload_image', 'position', 'heading', 'description'])->where('page_id', $data)->findAll();
+        // return $custom;
+
+        $custom_section_model  = new CustomSectionModel();
+        $custom_section = $custom_section_model->where('status', 1)->findAll();
+        
+        $custom = [];
+        if (!empty($custom_section)) {
+            foreach ($custom_section as $value) {
+                $custom_page = json_decode($value['page_id']);
+                
+                $temp = [];
+                if ($custom_page[0]->menu == $menu_id && $custom_page[0]->sub_menu == $sub_menu) {
+                    $temp['id'] = $value['id'];
+                    $temp['upload_image'] = $value['upload_image'];
+                    $temp['position'] = $value['position'];
+                    $temp['heading'] = $value['heading'];
+                    $temp['description'] = $value['description'];
+                    $custom[] = $temp;
+                }
+            }
+        }
         return $custom;
+
     }
 
     /**
@@ -365,12 +388,10 @@ class User_details{
                 
                 foreach($slider_page as $sp){
                     if($sp['sub_menu_title'] == $data){
-                        //$sp['slider_image'] = $slider_image_list;
                         $slider_image_list['section_id'] = $slider_detail['id'];
                         $final_slider[] = $slider_image_list;
                     }
                 }
-                
                 //return $final_slider;
             }
         }
@@ -525,11 +546,11 @@ class User_details{
         
         $this->service_section->select(['services', 'pages']);
         $service_details = $this->service_section->findAll();
-        
+
         $final_services = [];
         if(!empty($service_details)){
             foreach($service_details as $service_detail){
-                
+
                 $service_pages = json_decode($service_detail['pages']); 
                 $services    = json_decode($service_detail['services']);
                
@@ -659,18 +680,34 @@ class User_details{
         return $final_posts;
     }
 
-    public function getSortOrder($data = null)
+    public function getSortOrder($data = null, $menu_id=0, $submenu_id=0)
     {
         $this->arrange_section = new ArrangeSection();
+
         if($data == "Home"){
             $menu_id = 1;
             $custom = $this->arrange_section->select(['section_title','menu_id','section_id','soroting_order','url_val'])->where(['menu_id' => $menu_id,'status' => 1])->orderby('soroting_order')->findAll();
             return $custom;
         }
 
-        if($data == "About Us"){
+        else if($data == "About Us"){
             $menu_id = 2;
             $custom = $this->arrange_section->select(['section_title','menu_id','section_id','soroting_order','url_val'])->where(['menu_id' => $menu_id,'status' => 1])->orderby('soroting_order')->findAll();
+            return $custom;
+        }
+
+        else if($data == "Contact"){
+            $menu_id = getMenuId($data);
+            
+            $custom = $this->arrange_section->select(['section_title','menu_id','section_id','soroting_order','url_val'])->where(['menu_id' => $menu_id,'status' => 1])->orderby('soroting_order')->findAll();
+            return $custom;
+        }
+
+        else if($menu_id != 0 && $submenu_id != 0){
+            $arrange_custom_model = new ArrangeCustomSection();
+            
+            $custom = $arrange_custom_model->select(['section_title','menu_id','section_id','soroting_order','url_val'])->where(['menu_id' => $menu_id, 'submenu_id' => $submenu_id, 'status' => 1])->orderby('soroting_order')->findAll();
+            
             return $custom;
         }
     }

@@ -34,6 +34,7 @@ class Home extends UiController {
          * Make Slider images array
          */
         $slider = $this->user_slider->getSlider('Home');
+        
 
         /**
          * Make gallery images array
@@ -48,7 +49,7 @@ class Home extends UiController {
         /**
          * Make custom section array data
          */
-        $custom =  $this->user_slider->getCustomSectionData('Home');
+        $custom =  $this->user_slider->getCustomSectionData('1', '0', '');
         
         /**
          * Make testimonial data section array data
@@ -104,7 +105,6 @@ class Home extends UiController {
             'fq_lists'      => $fq_lists,
             'sort_order'    => $sort_order,
         ];
-
         return view($this->user['theme_name'].'/'.'frontend/index', $pageData);
     }
 

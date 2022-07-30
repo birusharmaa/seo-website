@@ -16,7 +16,6 @@ class UiController extends BaseController{
         $user_details = new User_details();
         $this->user = $user_details->getUserDetails();
         $this->final_menu  = $user_details->menuLists();
-        $this->custom_section =  $user_details->getCustomSectionData();
         $this->services =  $user_details->getServicesData();
         $this->products =  $user_details->getAllProductsList();
         //$this->videoes  =  $user_details->getVideoLists();

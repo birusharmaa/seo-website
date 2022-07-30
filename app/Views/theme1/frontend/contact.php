@@ -6,32 +6,13 @@
 <?= $this->endSection() ?>
 <?= $this->section("contentTheme1") ?>
 <div class="contact-us-page overflow-hidden">
-    <!-- ------Slider------- -->
-    <?= $this->include('theme1/frontend/layout/slider') ?>
-
-    <!-- ----- Our Custom Section ------- -->
-    <?= $this->include('theme1/frontend/layout/custom') ?>
-
-    <!-- ----- Our Services------- -->
-    <?= $this->include('theme1/frontend/layout/services') ?>
-    
-    <!-- ----------Our Products------ -->
-    <?= $this->include('theme1/frontend/layout/products');?>
-
-    <!-- ---------Our Updates-------- -->
-    <?= $this->include('theme1/frontend/layout/posts');?>
-
-    <!-- --------Our Videos----------- -->
-    <?= $this->include('theme1/frontend/layout/videos') ?>
-
-    <!-- --------Image Gallery---------- -->
-    <?= $this->include('theme1/frontend/layout/galleries') ?>
-
-    <!-- --------Testimonial section---------- -->
-    <?= $this->include('theme1/frontend/layout/testimonials') ?>
-
-    <!-- --------Our Faq lists----------- -->
-    <!-- <?//= $this->include('theme1/frontend/layout/faq_lists') ?> -->
+    <?php
+        foreach($sort_order as $myurl){
+            if($myurl['url_val'] != "contact"){
+                include('layout/'.$myurl['url_val'].'.php');
+            }
+        }
+    ?>
     
     <section class="mb-4">
         <div class="contact section-padding">

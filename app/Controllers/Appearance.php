@@ -42,6 +42,7 @@ class Appearance extends BaseController
             $user_data = $this->session->get('login_user');
         }  
         $data['info'] = $this->appearance->get_header_footer($user_data["user_id"]);
+       
         $this->user = new Users_model(); 
         $userinfo =  $this->user->getUserInfoId($user_data['user_id']);
         $data['topbar'] =  $userinfo->topbar;   
@@ -154,7 +155,13 @@ class Appearance extends BaseController
                         ])->first();
                     if(isset($id['id']) && !empty($id['id'])){
                         $this->custom_arrange->delete($id['id']);
-                    }                    
+                    }          
+                    if($arr[4]=="Slider Section"){
+                        $url = "slider";
+                    }    
+                    if($arr[4]=="Custom Section"){
+                        $url = "custom";
+                    }      
                     $collection_insert = array(
                         'menu_id' => $arr[0],
                         'submenu_id' => $arr[1],
@@ -162,7 +169,8 @@ class Appearance extends BaseController
                         'soroting_order' => $num, 
                         'section_title' => $arr[4],
                         'title' => $arr[5],
-                        'created_by' => $user_data["user_id"]
+                        'created_by' => $user_data["user_id"],
+                        "url_val"  => $url
                         ); 
                     $res = $model->save_custom_arrange_sorting($collection_insert);  
                     if($res){

@@ -224,10 +224,13 @@ class ManageSection extends BaseController
             $return = $this->manage->add_slider($data);
             $last_id = $db->insertID();
             if ($return) {
-
+                
                 //Insert slider data information in arrange section table for showing by default in arrange section side bar menus
                 foreach ($page_id as $p_id) {
-                    if ($p_id[0] == 1 || $p_id[0] == 2) {
+                    $var = explode(",", $p_id);
+                    $menu_title = getMenuTitleName($var[0]);
+                   
+                    if ($p_id[0] == 1 || $p_id[0] == 2 ||  $menu_title == "Contact") {
                         $result = $this->arrange_section_model->select('max(soroting_order) as sorting_order')->first();
                         $sorting_order = $result['sorting_order'];
 
@@ -235,7 +238,7 @@ class ManageSection extends BaseController
                         $arrange_section_data = [
                             'section_title' => 'Slider Section',
                             'section_id'    => $last_id,
-                            'menu_id'       => $p_id[0],
+                            'menu_id'       => $var[0],
                             'submenu_id'    => 0,
                             'title'         => xss_clean($this->request->getVar('section_name')),
                             'url_val'       => 'slider',
@@ -246,7 +249,6 @@ class ManageSection extends BaseController
                         $this->arrange_section_model->insert($arrange_section_data);
                     }
                 }
-
                 echo json_encode(['status' => true, 'message' => 'Slider saved successfully.']);
             } else {
                 echo json_encode(['status' => false, 'message' => 'Their is some problem. Please try again.']);
@@ -304,19 +306,19 @@ class ManageSection extends BaseController
 
         foreach ($page_id as $value) {
             $testarr = explode(",", $value);
-
-            if ($testarr[0] == 3) {
-                $sub_menu_title = $this->manage->get_serviceName($testarr[1]);
-                $sub_menu_title = "Service -" . $sub_menu_title;
-            } else if ($testarr[0] == 4) {
-                $sub_menu_title = $this->manage->get_productName($testarr[1]);
-                $sub_menu_title = "Products -" . $sub_menu_title;
-            } else {
-                $sub_menu_title = $this->manage->get_menuName($testarr[0]);
-            }
+            $sub_menu_title = $this->manage->get_menuName($testarr[0]);
+            // if ($testarr[0] == 3) {
+            //     $sub_menu_title = $this->manage->get_serviceName($testarr[1]);
+            //     $sub_menu_title = "Service -" . $sub_menu_title;
+            // } else if ($testarr[0] == 4) {
+            //     $sub_menu_title = $this->manage->get_productName($testarr[1]);
+            //     $sub_menu_title = "Products -" . $sub_menu_title;
+            // } else {
+            //     $sub_menu_title = $this->manage->get_menuName($testarr[0]);
+            // }
             $arr[] = [
                 "menu" => $testarr[0],
-                "sub_menu" => $testarr[1],
+                "sub_menu" => $testarr[2],
                 "sub_menu_title" => $sub_menu_title,
             ];
         }
@@ -2943,20 +2945,33 @@ class ManageSection extends BaseController
         if($fetch_by_submenu=="N"){
             $old_arrange = $this->manage->get_arranged_section($menuid, $second_id, $user_data["user_id"]);
         }else{
+
+            $final_results = [];
+            //Get slider data form custom arrange table
             $results = $this->custom_arrange_model
             ->select(['title', 'section_id', 'menu_id', 'submenu_id', 'section_title'])
             ->where(['menu_id' => $menuid, 'submenu_id' => $second_id])
             ->findAll();
+
+            $final_results = $results;
+           
+
+            //Get New slider data in get slider section tables
             $page_arranges = getPageSlider($menuid, $second_id);
-           
-           
+            
+            $custom_page_data = getPageCustomSection($menuid, $second_id);
+            if(!empty($custom_page_data)){
+                $page_arranges = array_merge($page_arranges, $custom_page_data);
+            }
+
             $old_arrange = $page_arranges;
-           
-            if(count($results)>0){
-                $results = array_merge($results, $page_arranges);
-                $results = array_values(array_column($results , null, 'section_id'));
-                $old_arrange = $results;
-            }    
+            if(count($final_results)>0){
+                $final_results = array_merge($final_results, $page_arranges);
+                $final_results = array_values(array_column($final_results , null, 'section_id'));
+                $old_arrange = $final_results;
+            }
+            
+            //Return data for view 
             $old_arrange = json_decode(json_encode($old_arrange), false);        
         }
 

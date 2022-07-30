@@ -64,7 +64,9 @@ class Contact extends UiController {
         */
         $post_updates =  $this->user_slider->getUpdateLists('Contact');  
 
-
+        
+        $sort_order =  $this->user_slider->getSortOrder('Contact');
+        
         $pageData = [
             'title' => 'Contact Us',
             'description' => 'This is the contact page',
@@ -87,6 +89,7 @@ class Contact extends UiController {
             'custom_section'=> $custom,
             'testimonials'  => $testimonial,
             'fq_lists'      => $fq_lists,
+            'sort_order'    => $sort_order,
             
         ];
         return view($this->user['theme_name']."/".'frontend/contact', $pageData);

@@ -78,7 +78,10 @@ if (!function_exists('getSubMenuPageName')) {
                 ->select('service')
                 ->where(['status'=>1, 'id'=>$submenu])
                 ->first();
-                return "Services- ".$res['service'];
+                if(!empty($res['service'])){
+                    return "Services- ".$res['service'];
+                }
+                
             }
             else if($menu_name['menu_name']=="Products"){
                 $products_model = new ProductsModel();
@@ -86,7 +89,9 @@ if (!function_exists('getSubMenuPageName')) {
                 ->select('product_name as service')
                 ->where(['status'=>1, 'id'=>$submenu])
                 ->first();
-                return "Products- ".$res['service'];
+                if(!empty($res['service'])){
+                    return "Products- ".$res['service'];
+                }
                 
             }
             else if($menu_name['menu_name']=="Updates"){
@@ -95,7 +100,9 @@ if (!function_exists('getSubMenuPageName')) {
                 ->select('title as service')
                 ->where(['status'=>'published', 'id'=>$submenu])
                 ->first();
-                return "Updates- ".$res['service'];
+                if(!empty($res['service'])){
+                    return "Updates- ".$res['service'];
+                }
             }
             else{
                 $menu_name = $menu_model->select('menu_name')->where('id', $menu_id)->first();
@@ -109,6 +116,15 @@ if (!function_exists('getSubMenuPageName')) {
                 return $menu."- ".$res['service'];
             }
         }
+    }
+}
+
+
+if (!function_exists('getMenuTitleName')) {
+    function getMenuTitleName($id = 0) {
+        $menu_model = new MenuModel();
+        $menu_name = $menu_model->select('menu_name')->where('id', $id)->first();
+        return $menu_name['menu_name'];
     }
 }
 

@@ -2438,22 +2438,21 @@ function editCustom_section(value) {
         $("#section_btn").text("Update");
         $("#offcanvasRight").offcanvas("show");
 
-        // var page_id = data.data.page_id;
-        // var pagesIds = JSON.parse(page_id);
-        console.log(data.data);
-        $("#page_id").val(data.data.page_id);
-        $("#page_id").trigger("change");
-        // if (pagesIds.length) {
-        //   $.each(pagesIds, function (key, value) {
-        //     let opt = value.menu + "," + value.sub_menu;
-        //     pages.push(opt);
-        //   });
-        //   $("#page_id").val(pages);
-        //   $("#page_id").trigger("change");
-        // } else {
-        //   $("#page_id").val("");
-        //   $("#page_id").trigger("change");
-        // }
+        var page_id = data.data.page_id;
+        var pagesIds = JSON.parse(page_id);
+        // $("#page_id").val(data.data.page_id);
+        // $("#page_id").trigger("change");
+        if (pagesIds) {
+          $.each(pagesIds, function (key, value) {
+            let opt = value.menu + ", 0," + value.sub_menu;
+            pages.push(opt);
+          });
+          $("#page_id").val(pages);
+          $("#page_id").trigger("change");
+        } else {
+          $("#page_id").val("");
+          $("#page_id").trigger("change");
+        }
       }
     },
   });
